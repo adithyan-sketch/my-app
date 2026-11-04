@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Management System</title>
+</head>
+<body>
+
+    <h1>Student Management System</h1>
+
+    <h2>Add Student</h2>
+
+    <input type="text" id="name" placeholder="Enter student name">
+    <button onclick="addStudent()">Add Student</button>
+
+    <h2>Student List</h2>
+    <ul id="students"></ul>
+
+    <script>
+        async function addStudent() {
+            const name = document.getElementById("name").value;
+
+            const response = await fetch("/api/students", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({name: name})
+            });
+
+            const data = await response.json();
+
+            alert(data.message);
+
+            document.getElementById("name").value = "";
+
+            loadStudents();
+        }
+
+        async function loadStudents() {
+            const response = await fetch("/api/students");
+            const students = await response.json();
+
+            const list = document.getElementById("students");
+            list.innerHTML = "";
+
+            students.forEach(student => {
+                const li = document.createElement("li");
+                li.textContent = student.id + " - " + student.name;
+                list.appendChild(li);
+            });
+        }
+
+        loadStudents();
+    </script>
+
+</body>
+</html>
